@@ -15,4 +15,14 @@ npm run dev
 npm run build
 ```
 
-The site is designed for GitHub Pages and is deployed by `.github/workflows/deploy.yml`.
+## Publish to Branch Root
+
+GitHub Pages may serve this user site from the `main` branch root. To refresh the
+committed static files for that mode:
+
+```bash
+npm run publish:root
+```
+
+The project also includes `.github/workflows/deploy.yml` for GitHub Actions based
+Pages publishing.
