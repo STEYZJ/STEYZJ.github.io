@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowUpRight,
   BrainCircuit,
@@ -237,6 +237,36 @@ function App() {
   const copy = copies[lang];
   const nextLang: Lang = lang === "zh" ? "en" : "zh";
 
+  useEffect(() => {
+    const revealItems = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+
+    if (!("IntersectionObserver" in window)) {
+      revealItems.forEach((item) => item.classList.add("is-visible"));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            return;
+          }
+
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        });
+      },
+      {
+        rootMargin: "0px 0px -14% 0px",
+        threshold: 0.16,
+      },
+    );
+
+    revealItems.forEach((item) => observer.observe(item));
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <main className="site-shell" lang={lang === "zh" ? "zh-CN" : "en"}>
       <header className="topbar" aria-label="Primary navigation">
@@ -323,21 +353,27 @@ function App() {
         </aside>
       </section>
 
-      <section className="featured-band" id="work">
-        <div className="section-heading">
+      <section className="featured-band scroll-scene" id="work">
+        <div className="section-heading" data-reveal="headline">
           <p className="eyebrow">
             <TerminalSquare size={16} aria-hidden="true" />
             {copy.project.eyebrow}
           </p>
           <h2>{copy.project.title}</h2>
         </div>
-        <a className="featured-card" href="https://github.com/STEYZJ/HyperAgent">
+        <a className="featured-card" href="https://github.com/STEYZJ/HyperAgent" data-reveal="card">
           <div className="project-copy">
             <span className="status-pill">{copy.project.status}</span>
             <p>{copy.project.description}</p>
             <div className="tag-row">
-              {copy.project.bullets.map((bullet) => (
-                <span key={bullet}>{bullet}</span>
+              {copy.project.bullets.map((bullet, index) => (
+                <span
+                  key={bullet}
+                  data-reveal="chip"
+                  style={{ transitionDelay: `${220 + index * 90}ms` }}
+                >
+                  {bullet}
+                </span>
               ))}
             </div>
           </div>
@@ -348,8 +384,8 @@ function App() {
         </a>
       </section>
 
-      <section className="content-section" id="focus">
-        <div className="section-heading">
+      <section className="content-section scroll-scene" id="focus">
+        <div className="section-heading" data-reveal="headline">
           <p className="eyebrow">
             <Radar size={16} aria-hidden="true" />
             {copy.focus.eyebrow}
@@ -361,7 +397,12 @@ function App() {
             const Icon = focusIcons[index] ?? BrainCircuit;
 
             return (
-              <article className="focus-card" key={item.title}>
+              <article
+                className="focus-card"
+                key={item.title}
+                data-reveal="card"
+                style={{ transitionDelay: `${index * 120}ms` }}
+              >
                 <Icon size={24} aria-hidden="true" />
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>
@@ -371,8 +412,12 @@ function App() {
         </div>
       </section>
 
-      <section className="content-section stack-section" id="stack" aria-labelledby="stack-title">
-        <div className="section-heading">
+      <section
+        className="content-section stack-section scroll-scene"
+        id="stack"
+        aria-labelledby="stack-title"
+      >
+        <div className="section-heading" data-reveal="headline">
           <p className="eyebrow">
             <BrainCircuit size={16} aria-hidden="true" />
             {copy.stack.eyebrow}
@@ -380,14 +425,20 @@ function App() {
           <h2 id="stack-title">{copy.stack.title}</h2>
         </div>
         <div className="skill-cloud">
-          {copy.stack.tools.map((skill) => (
-            <span key={skill}>{skill}</span>
+          {copy.stack.tools.map((skill, index) => (
+            <span
+              key={skill}
+              data-reveal="chip"
+              style={{ transitionDelay: `${index * 55}ms` }}
+            >
+              {skill}
+            </span>
           ))}
         </div>
       </section>
 
-      <section className="contact-band" id="contact">
-        <div>
+      <section className="contact-band scroll-scene" id="contact">
+        <div data-reveal="headline">
           <p className="eyebrow">
             <Github size={16} aria-hidden="true" />
             {copy.contact.eyebrow}
@@ -395,7 +446,7 @@ function App() {
           <h2>{copy.contact.title}</h2>
           <p>{copy.contact.text}</p>
         </div>
-        <a className="button primary" href="https://github.com/STEYZJ">
+        <a className="button primary" href="https://github.com/STEYZJ" data-reveal="card">
           <Github size={18} aria-hidden="true" />
           {copy.contact.action}
         </a>
