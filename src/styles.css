@@ -832,7 +832,7 @@ h3 {
   border-top: 1px solid var(--line);
 }
 
-.contact-band div {
+.contact-band > div:first-child {
   max-width: 690px;
 }
 
@@ -843,9 +843,11 @@ h3 {
 .contact-actions {
   display: flex;
   flex: 0 0 auto;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  max-width: none;
 }
 
 .contact-actions .button {
@@ -908,12 +910,17 @@ h3 {
   }
 
   .skill-cloud,
-  .contact-band .button {
+  .contact-actions {
     margin-top: 22px;
   }
 
   .contact-actions {
     align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .contact-actions .button {
+    margin-top: 0;
   }
 }
 
