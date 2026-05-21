@@ -248,17 +248,12 @@ function App() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (!entry.isIntersecting) {
-            return;
-          }
-
-          entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
+          entry.target.classList.toggle("is-visible", entry.isIntersecting);
         });
       },
       {
-        rootMargin: "0px 0px -14% 0px",
-        threshold: 0.16,
+        rootMargin: "0px 0px -8% 0px",
+        threshold: 0.08,
       },
     );
 
@@ -446,10 +441,16 @@ function App() {
           <h2>{copy.contact.title}</h2>
           <p>{copy.contact.text}</p>
         </div>
-        <a className="button primary" href="https://github.com/STEYZJ" data-reveal="card">
-          <Github size={18} aria-hidden="true" />
-          {copy.contact.action}
-        </a>
+        <div className="contact-actions" data-reveal="card">
+          <a className="button primary" href="https://github.com/STEYZJ">
+            <Github size={18} aria-hidden="true" />
+            {copy.contact.action}
+          </a>
+          <a className="text-link" href="https://github.com/STEYZJ">
+            github.com/STEYZJ
+            <ArrowUpRight size={16} aria-hidden="true" />
+          </a>
+        </div>
       </section>
     </main>
   );
