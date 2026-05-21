@@ -45,6 +45,12 @@ type Copy = {
     status: string;
     repo: string;
     bullets: string[];
+    flowLabel: string;
+    steps: Array<{
+      label: string;
+      title: string;
+      text: string;
+    }>;
   };
   focus: {
     eyebrow: string;
@@ -108,6 +114,29 @@ const copies: Record<Lang, Copy> = {
       status: "正式项目",
       repo: "打开仓库",
       bullets: ["多智能体研究流程", "遥感图像分类", "可复现实验记录"],
+      flowLabel: "HyperAgent 实验流程",
+      steps: [
+        {
+          label: "01",
+          title: "Plan",
+          text: "把研究目标、数据集和评价指标拆成可执行实验。",
+        },
+        {
+          label: "02",
+          title: "Run",
+          text: "组织模型、参数、日志与运行记录，减少隐性状态。",
+        },
+        {
+          label: "03",
+          title: "Evaluate",
+          text: "汇总结果、对比表现，并保留可追踪的实验证据。",
+        },
+        {
+          label: "04",
+          title: "Iterate",
+          text: "根据评估反馈生成下一轮实验计划。",
+        },
+      ],
     },
     focus: {
       eyebrow: "Current Direction",
@@ -188,6 +217,29 @@ const copies: Record<Lang, Copy> = {
       status: "formal project",
       repo: "Open repository",
       bullets: ["multi-agent research flow", "remote sensing classification", "reproducible traces"],
+      flowLabel: "HyperAgent experiment flow",
+      steps: [
+        {
+          label: "01",
+          title: "Plan",
+          text: "Break research goals, datasets, and metrics into executable experiments.",
+        },
+        {
+          label: "02",
+          title: "Run",
+          text: "Coordinate models, parameters, logs, and run records with less hidden state.",
+        },
+        {
+          label: "03",
+          title: "Evaluate",
+          text: "Summarize results, compare performance, and keep traceable evidence.",
+        },
+        {
+          label: "04",
+          title: "Iterate",
+          text: "Turn evaluation feedback into the next experiment plan.",
+        },
+      ],
     },
     focus: {
       eyebrow: "Current Direction",
@@ -356,27 +408,48 @@ function App() {
           </p>
           <h2>{copy.project.title}</h2>
         </div>
-        <a className="featured-card" href="https://github.com/STEYZJ/HyperAgent" data-reveal="card">
-          <div className="project-copy">
-            <span className="status-pill">{copy.project.status}</span>
-            <p>{copy.project.description}</p>
-            <div className="tag-row">
-              {copy.project.bullets.map((bullet, index) => (
-                <span
-                  key={bullet}
-                  data-reveal="chip"
-                  style={{ transitionDelay: `${220 + index * 90}ms` }}
-                >
-                  {bullet}
-                </span>
-              ))}
+        <div className="product-stage">
+          <a
+            className="featured-card"
+            href="https://github.com/STEYZJ/HyperAgent"
+            data-reveal="card"
+          >
+            <div className="project-copy">
+              <span className="status-pill">{copy.project.status}</span>
+              <p>{copy.project.description}</p>
+              <div className="tag-row">
+                {copy.project.bullets.map((bullet, index) => (
+                  <span
+                    key={bullet}
+                    data-reveal="chip"
+                    style={{ transitionDelay: `${220 + index * 90}ms` }}
+                  >
+                    {bullet}
+                  </span>
+                ))}
+              </div>
             </div>
+            <span className="repo-link">
+              {copy.project.repo}
+              <ArrowUpRight size={20} aria-hidden="true" />
+            </span>
+          </a>
+
+          <div className="agent-flow" aria-label={copy.project.flowLabel}>
+            {copy.project.steps.map((step, index) => (
+              <article
+                className="flow-step"
+                key={`${step.label}-${step.title}`}
+                data-reveal="card"
+                style={{ transitionDelay: `${index * 90}ms` }}
+              >
+                <span>{step.label}</span>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </article>
+            ))}
           </div>
-          <span className="repo-link">
-            {copy.project.repo}
-            <ArrowUpRight size={20} aria-hidden="true" />
-          </span>
-        </a>
+        </div>
       </section>
 
       <section className="content-section scroll-scene" id="focus">
