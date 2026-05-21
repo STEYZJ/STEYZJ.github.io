@@ -438,18 +438,14 @@ function App() {
             <Github size={16} aria-hidden="true" />
             {copy.contact.eyebrow}
           </p>
-          <h2>{copy.contact.title}</h2>
+          <div className="contact-title-row">
+            <h2>{copy.contact.title}</h2>
+            <a className="button primary" href="https://github.com/STEYZJ">
+              <Github size={18} aria-hidden="true" />
+              {copy.contact.action}
+            </a>
+          </div>
           <p>{copy.contact.text}</p>
-        </div>
-        <div className="contact-actions" data-reveal="card">
-          <a className="button primary" href="https://github.com/STEYZJ">
-            <Github size={18} aria-hidden="true" />
-            {copy.contact.action}
-          </a>
-          <a className="text-link" href="https://github.com/STEYZJ">
-            github.com/STEYZJ
-            <ArrowUpRight size={16} aria-hidden="true" />
-          </a>
         </div>
       </section>
     </main>

@@ -814,8 +814,7 @@ h3 {
 .focus-card[data-reveal],
 .tag-row span[data-reveal],
 .skill-cloud span[data-reveal],
-.button[data-reveal],
-.contact-actions[data-reveal] {
+.button[data-reveal] {
   transition:
     opacity 680ms ease,
     transform 680ms ease,
@@ -837,40 +836,24 @@ h3 {
 }
 
 .contact-band > div:first-child {
-  max-width: 690px;
+  width: 100%;
 }
 
 .contact-band h2 {
+  min-width: 0;
+}
+
+.contact-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
   margin-bottom: 16px;
 }
 
-.contact-actions {
-  display: flex;
+.contact-title-row .button {
   flex: 0 0 auto;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 14px;
-  max-width: none;
-}
-
-.contact-actions .button {
   margin-top: 0;
-}
-
-.text-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--green);
-  font-size: 0.92rem;
-  font-weight: 900;
-}
-
-.text-link:hover,
-.text-link:focus-visible {
-  color: var(--ink);
-  outline: none;
 }
 
 @media (max-width: 860px) {
@@ -913,18 +896,8 @@ h3 {
     grid-template-columns: 1fr;
   }
 
-  .skill-cloud,
-  .contact-actions {
+  .skill-cloud {
     margin-top: 22px;
-  }
-
-  .contact-actions {
-    align-items: flex-start;
-    justify-content: flex-start;
-  }
-
-  .contact-actions .button {
-    margin-top: 0;
   }
 }
 
@@ -941,6 +914,16 @@ h3 {
   .hero-actions,
   .button {
     width: 100%;
+  }
+
+  .contact-title-row {
+    gap: 12px;
+  }
+
+  .contact-title-row .button {
+    width: auto;
+    padding-right: 14px;
+    padding-left: 14px;
   }
 
   .nav-cluster {
