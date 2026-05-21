@@ -132,6 +132,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden;
   background:
     linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
@@ -260,6 +261,67 @@ button {
   font-weight: 800;
 }
 
+.scene-rail {
+  position: fixed;
+  top: 50%;
+  right: max(18px, calc((100vw - 1280px) / 2));
+  z-index: 4;
+  display: grid;
+  gap: 8px;
+  transform: translateY(-50%);
+}
+
+.scene-rail::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 16px;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(0, 217, 146, 0.56), transparent);
+}
+
+.scene-rail a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 4px 9px 4px 0;
+  color: rgba(247, 244, 239, 0.52);
+  font-size: 0.76rem;
+  font-weight: 800;
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    transform 180ms ease;
+}
+
+.scene-rail a:hover,
+.scene-rail a:focus-visible {
+  border-color: rgba(0, 217, 146, 0.36);
+  background: rgba(16, 16, 16, 0.78);
+  color: var(--ink);
+  outline: none;
+  transform: translateX(-2px);
+}
+
+.scene-rail span {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: rgba(16, 16, 16, 0.9);
+  color: var(--green);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.72rem;
+}
+
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(330px, 0.95fr);
@@ -271,6 +333,19 @@ button {
 
 .hero-copy {
   max-width: 760px;
+}
+
+.scene-kicker {
+  display: inline-flex;
+  margin-bottom: 14px;
+  border: 1px solid rgba(0, 217, 146, 0.32);
+  border-radius: 6px;
+  padding: 6px 8px;
+  background: rgba(0, 217, 146, 0.07);
+  color: var(--green);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.72rem;
+  font-weight: 900;
 }
 
 .eyebrow {
@@ -322,7 +397,8 @@ h3 {
 }
 
 .hero-actions,
-.tag-row {
+.tag-row,
+.protocol-strip {
   flex-wrap: wrap;
   gap: 10px;
 }
@@ -372,9 +448,15 @@ h3 {
 .hero-copy .eyebrow,
 .hero-copy h1,
 .hero-text,
-.hero-actions {
+.hero-actions,
+.hero-copy .scene-kicker,
+.protocol-strip {
   opacity: 0;
   animation: rise-in 680ms ease forwards;
+}
+
+.hero-copy .scene-kicker {
+  animation-delay: 40ms;
 }
 
 .hero-copy .eyebrow {
@@ -391,6 +473,32 @@ h3 {
 
 .hero-actions {
   animation-delay: 320ms;
+}
+
+.protocol-strip {
+  display: flex;
+  margin-top: 18px;
+  animation-delay: 420ms;
+}
+
+.protocol-strip span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--muted);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.protocol-strip strong {
+  margin-right: 8px;
+  color: var(--green);
+  font-weight: 900;
 }
 
 .console-panel,
@@ -623,6 +731,7 @@ h3 {
 
 .scroll-scene {
   min-height: 56vh;
+  scroll-margin-top: 96px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -928,7 +1037,17 @@ h3 {
   margin-top: 0;
 }
 
+@media (max-width: 1320px) {
+  .scene-rail {
+    display: none;
+  }
+}
+
 @media (max-width: 860px) {
+  .scene-rail {
+    display: none;
+  }
+
   .site-shell {
     width: min(100% - 24px, 720px);
     padding-top: 12px;

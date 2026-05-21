@@ -17,6 +17,14 @@ import {
 type Lang = "zh" | "en";
 
 type Copy = {
+  sceneNav: {
+    label: string;
+    items: Array<{
+      id: string;
+      number: string;
+      label: string;
+    }>;
+  };
   nav: {
     work: string;
     focus: string;
@@ -33,6 +41,8 @@ type Copy = {
     panelTitle: string;
     panelStatus: string;
     metrics: Array<{ value: string; label: string }>;
+    protocol: Array<{ label: string; value: string }>;
+    protocolLabel: string;
   };
   code: {
     tabs: string[];
@@ -75,6 +85,16 @@ type Copy = {
 
 const copies: Record<Lang, Copy> = {
   zh: {
+    sceneNav: {
+      label: "页面章节",
+      items: [
+        { id: "top", number: "01", label: "身份" },
+        { id: "work", number: "02", label: "项目" },
+        { id: "focus", number: "03", label: "方向" },
+        { id: "stack", number: "04", label: "技术" },
+        { id: "contact", number: "05", label: "联系" },
+      ],
+    },
     nav: {
       work: "项目",
       focus: "方向",
@@ -95,6 +115,12 @@ const copies: Record<Lang, Copy> = {
         { value: "HSI", label: "高光谱图像" },
         { value: "Agent", label: "实验自动化" },
         { value: "Python", label: "核心栈" },
+      ],
+      protocolLabel: "Open Design 原型规格",
+      protocol: [
+        { label: "Mode", value: "Prototype" },
+        { label: "System", value: "VoltAgent-inspired" },
+        { label: "Direction", value: "Product scroll" },
       ],
     },
     code: {
@@ -178,6 +204,16 @@ const copies: Record<Lang, Copy> = {
     },
   },
   en: {
+    sceneNav: {
+      label: "Page sections",
+      items: [
+        { id: "top", number: "01", label: "Identity" },
+        { id: "work", number: "02", label: "Project" },
+        { id: "focus", number: "03", label: "Focus" },
+        { id: "stack", number: "04", label: "Stack" },
+        { id: "contact", number: "05", label: "Contact" },
+      ],
+    },
     nav: {
       work: "Work",
       focus: "Focus",
@@ -198,6 +234,12 @@ const copies: Record<Lang, Copy> = {
         { value: "HSI", label: "hyperspectral" },
         { value: "Agent", label: "automation" },
         { value: "Python", label: "core stack" },
+      ],
+      protocolLabel: "Open Design prototype spec",
+      protocol: [
+        { label: "Mode", value: "Prototype" },
+        { label: "System", value: "VoltAgent-inspired" },
+        { label: "Direction", value: "Product scroll" },
       ],
     },
     code: {
@@ -343,8 +385,20 @@ function App() {
         </div>
       </header>
 
+      <nav className="scene-rail" aria-label={copy.sceneNav.label}>
+        {copy.sceneNav.items.map((item) => (
+          <a href={`#${item.id}`} key={item.id}>
+            <span>{item.number}</span>
+            {item.label}
+          </a>
+        ))}
+      </nav>
+
       <section className="hero" id="top">
         <div className="hero-copy">
+          <span className="scene-kicker">
+            {copy.sceneNav.items[0].number} / {copy.sceneNav.items[0].label}
+          </span>
           <p className="eyebrow">
             <CircuitBoard size={16} aria-hidden="true" />
             {copy.hero.eyebrow}
@@ -360,6 +414,14 @@ function App() {
               <Github size={18} aria-hidden="true" />
               {copy.hero.secondaryAction}
             </a>
+          </div>
+          <div className="protocol-strip" aria-label={copy.hero.protocolLabel}>
+            {copy.hero.protocol.map((item) => (
+              <span key={item.label}>
+                <strong>{item.label}</strong>
+                {item.value}
+              </span>
+            ))}
           </div>
         </div>
 
@@ -402,11 +464,16 @@ function App() {
 
       <section className="featured-band scroll-scene" id="work">
         <div className="section-heading" data-reveal="headline">
-          <p className="eyebrow">
-            <TerminalSquare size={16} aria-hidden="true" />
-            {copy.project.eyebrow}
-          </p>
-          <h2>{copy.project.title}</h2>
+          <div>
+            <span className="scene-kicker">
+              {copy.sceneNav.items[1].number} / {copy.sceneNav.items[1].label}
+            </span>
+            <p className="eyebrow">
+              <TerminalSquare size={16} aria-hidden="true" />
+              {copy.project.eyebrow}
+            </p>
+            <h2>{copy.project.title}</h2>
+          </div>
         </div>
         <div className="product-stage">
           <a
@@ -454,11 +521,16 @@ function App() {
 
       <section className="content-section scroll-scene" id="focus">
         <div className="section-heading" data-reveal="headline">
-          <p className="eyebrow">
-            <Radar size={16} aria-hidden="true" />
-            {copy.focus.eyebrow}
-          </p>
-          <h2>{copy.focus.title}</h2>
+          <div>
+            <span className="scene-kicker">
+              {copy.sceneNav.items[2].number} / {copy.sceneNav.items[2].label}
+            </span>
+            <p className="eyebrow">
+              <Radar size={16} aria-hidden="true" />
+              {copy.focus.eyebrow}
+            </p>
+            <h2>{copy.focus.title}</h2>
+          </div>
         </div>
         <div className="focus-grid">
           {copy.focus.items.map((item, index) => {
@@ -486,11 +558,16 @@ function App() {
         aria-labelledby="stack-title"
       >
         <div className="section-heading" data-reveal="headline">
-          <p className="eyebrow">
-            <BrainCircuit size={16} aria-hidden="true" />
-            {copy.stack.eyebrow}
-          </p>
-          <h2 id="stack-title">{copy.stack.title}</h2>
+          <div>
+            <span className="scene-kicker">
+              {copy.sceneNav.items[3].number} / {copy.sceneNav.items[3].label}
+            </span>
+            <p className="eyebrow">
+              <BrainCircuit size={16} aria-hidden="true" />
+              {copy.stack.eyebrow}
+            </p>
+            <h2 id="stack-title">{copy.stack.title}</h2>
+          </div>
         </div>
         <div className="skill-cloud">
           {copy.stack.tools.map((skill, index) => (
@@ -507,6 +584,9 @@ function App() {
 
       <section className="contact-band scroll-scene" id="contact">
         <div data-reveal="headline">
+          <span className="scene-kicker">
+            {copy.sceneNav.items[4].number} / {copy.sceneNav.items[4].label}
+          </span>
           <p className="eyebrow">
             <Github size={16} aria-hidden="true" />
             {copy.contact.eyebrow}
