@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "publish:root": "npm run build && cp -R dist/. .",
+    "publish:root": "npm run build && node -e \"import('node:fs').then(({rmSync})=>rmSync('assets',{recursive:true,force:true}))\" && cp -R dist/. .",
     "preview": "vite preview"
   },
   "dependencies": {
