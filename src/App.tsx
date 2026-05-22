@@ -66,10 +66,14 @@ type Copy = {
   project: {
     eyebrow: string;
     title: string;
-    description: string;
-    status: string;
     repo: string;
-    bullets: string[];
+    cards: Array<{
+      name: string;
+      href: string;
+      description: string;
+      status: string;
+      bullets: string[];
+    }>;
     flowLabel: string;
     steps: Array<{
       label: string;
@@ -157,13 +161,27 @@ const copies: Record<Lang, Copy> = {
       ],
     },
     project: {
-      eyebrow: "Featured Project",
-      title: "HyperAgent",
-      description:
-        "面向高光谱图像分类研究的自主多智能体实验框架，用来组织实验规划、运行、评估与迭代。",
-      status: "正式项目",
+      eyebrow: "Featured Projects",
+      title: "正式项目展台",
       repo: "打开仓库",
-      bullets: ["多智能体研究流程", "遥感图像分类", "可复现实验记录"],
+      cards: [
+        {
+          name: "HyperAgent",
+          href: "https://github.com/STEYZJ/HyperAgent",
+          description:
+            "面向高光谱图像分类研究的自主多智能体实验框架，用来组织实验规划、运行、评估与迭代。",
+          status: "主项目",
+          bullets: ["多智能体研究流程", "遥感图像分类", "可复现实验记录"],
+        },
+        {
+          name: "HyperVault",
+          href: "https://github.com/STEYZJ/HyperVault",
+          description:
+            "面向 Obsidian 知识库与智能体框架的生产型知识层，整合 Markdown vault、RAG 检索、长期记忆与 FastAPI 服务。",
+          status: "知识层项目",
+          bullets: ["Obsidian Vault", "RAG 检索", "长期记忆", "FastAPI"],
+        },
+      ],
       flowLabel: "HyperAgent 实验流程",
       steps: [
         {
@@ -217,6 +235,10 @@ const copies: Record<Lang, Copy> = {
         "Hyperspectral Imaging",
         "Remote Sensing",
         "Research Automation",
+        "RAG",
+        "FastAPI",
+        "Qdrant",
+        "Obsidian",
         "TypeScript",
       ],
     },
@@ -285,13 +307,31 @@ const copies: Record<Lang, Copy> = {
       ],
     },
     project: {
-      eyebrow: "Featured Project",
-      title: "HyperAgent",
-      description:
-        "An autonomous multi-agent framework for hyperspectral image classification research, designed around experiment planning, execution, evaluation, and iteration.",
-      status: "formal project",
+      eyebrow: "Featured Projects",
+      title: "Project showcase",
       repo: "Open repository",
-      bullets: ["multi-agent research flow", "remote sensing classification", "reproducible traces"],
+      cards: [
+        {
+          name: "HyperAgent",
+          href: "https://github.com/STEYZJ/HyperAgent",
+          description:
+            "An autonomous multi-agent framework for hyperspectral image classification research, designed around experiment planning, execution, evaluation, and iteration.",
+          status: "primary project",
+          bullets: [
+            "multi-agent research flow",
+            "remote sensing classification",
+            "reproducible traces",
+          ],
+        },
+        {
+          name: "HyperVault",
+          href: "https://github.com/STEYZJ/HyperVault",
+          description:
+            "A production knowledge layer for Obsidian vaults and agent frameworks, combining Markdown notes, RAG retrieval, long-term memory, and FastAPI services.",
+          status: "knowledge layer",
+          bullets: ["Obsidian Vault", "RAG retrieval", "long-term memory", "FastAPI"],
+        },
+      ],
       flowLabel: "HyperAgent experiment flow",
       steps: [
         {
@@ -345,6 +385,10 @@ const copies: Record<Lang, Copy> = {
         "Hyperspectral Imaging",
         "Remote Sensing",
         "Research Automation",
+        "RAG",
+        "FastAPI",
+        "Qdrant",
+        "Obsidian",
         "TypeScript",
       ],
     },
@@ -871,31 +915,37 @@ function App() {
           </div>
         </div>
         <div className="product-stage">
-          <a
-            className="featured-card"
-            href="https://github.com/STEYZJ/HyperAgent"
-            data-reveal="card"
-          >
-            <div className="project-copy">
-              <span className="status-pill">{copy.project.status}</span>
-              <p>{copy.project.description}</p>
-              <div className="tag-row">
-                {copy.project.bullets.map((bullet, index) => (
-                  <span
-                    key={bullet}
-                    data-reveal="chip"
-                    style={{ transitionDelay: `${220 + index * 90}ms` }}
-                  >
-                    {bullet}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <span className="repo-link">
-              {copy.project.repo}
-              <ArrowUpRight size={20} aria-hidden="true" />
-            </span>
-          </a>
+          <div className="project-grid">
+            {copy.project.cards.map((project, cardIndex) => (
+              <a
+                className="featured-card"
+                href={project.href}
+                data-reveal="card"
+                key={project.name}
+              >
+                <div className="project-copy">
+                  <span className="status-pill">{project.status}</span>
+                  <h3>{project.name}</h3>
+                  <p>{project.description}</p>
+                  <div className="tag-row">
+                    {project.bullets.map((bullet, index) => (
+                      <span
+                        key={bullet}
+                        data-reveal="chip"
+                        style={{ transitionDelay: `${180 + cardIndex * 80 + index * 70}ms` }}
+                      >
+                        {bullet}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <span className="repo-link">
+                  {copy.project.repo}
+                  <ArrowUpRight size={20} aria-hidden="true" />
+                </span>
+              </a>
+            ))}
+          </div>
 
           <div className="agent-flow" aria-label={copy.project.flowLabel}>
             <div className="stage-line" aria-hidden="true">
