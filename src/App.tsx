@@ -13,12 +13,14 @@ import {
   Satellite,
   Sun,
   Sunrise,
+  Sunset,
   TerminalSquare,
   Workflow,
 } from "lucide-react";
 
 type Lang = "zh" | "en";
 type ThemeMode = "dark" | "light" | "cycle";
+type DayPhase = "dawn" | "noon" | "sunset" | "evening" | "midnight" | "predawn";
 
 type Copy = {
   sceneNav: {
@@ -358,18 +360,67 @@ const themeIcons = {
   light: Sun,
   cycle: Sunrise,
 } satisfies Record<ThemeMode, typeof Moon>;
+const phaseIcons = {
+  dawn: Sunrise,
+  noon: Sun,
+  sunset: Sunset,
+  evening: Moon,
+  midnight: Moon,
+  predawn: Sunrise,
+} satisfies Record<DayPhase, typeof Moon>;
+
+function getDayPhase(date = new Date()): DayPhase {
+  const hour = date.getHours() + date.getMinutes() / 60;
+
+  if (hour >= 5 && hour < 8) {
+    return "dawn";
+  }
+
+  if (hour >= 8 && hour < 15.5) {
+    return "noon";
+  }
+
+  if (hour >= 15.5 && hour < 18.5) {
+    return "sunset";
+  }
+
+  if (hour >= 18.5 && hour < 22.5) {
+    return "evening";
+  }
+
+  if (hour >= 22.5 || hour < 2.5) {
+    return "midnight";
+  }
+
+  return "predawn";
+}
 
 function App() {
   const [lang, setLang] = useState<Lang>("zh");
   const [themeMode, setThemeMode] = useState<ThemeMode>("dark");
+  const [dayPhase, setDayPhase] = useState<DayPhase>(() => getDayPhase());
   const copy = copies[lang];
   const nextLang: Lang = lang === "zh" ? "en" : "zh";
   const currentThemeIndex = themeSequence.indexOf(themeMode);
   const nextThemeMode = themeSequence[(currentThemeIndex + 1) % themeSequence.length];
-  const ThemeIcon = themeIcons[themeMode];
+  const ThemeIcon = themeMode === "cycle" ? phaseIcons[dayPhase] : themeIcons[themeMode];
 
   useEffect(() => {
     document.documentElement.dataset.theme = themeMode;
+    document.documentElement.dataset.phase = themeMode === "cycle" ? dayPhase : "static";
+  }, [dayPhase, themeMode]);
+
+  useEffect(() => {
+    if (themeMode !== "cycle") {
+      return;
+    }
+
+    const updatePhase = () => setDayPhase(getDayPhase());
+    updatePhase();
+
+    const timer = window.setInterval(updatePhase, 60 * 1000);
+
+    return () => window.clearInterval(timer);
   }, [themeMode]);
 
   useEffect(() => {
@@ -417,12 +468,11 @@ function App() {
           <button
             className="theme-toggle"
             type="button"
-            aria-label={`${copy.theme.switchLabel}: ${copy.theme.modes[nextThemeMode]}`}
-            title={copy.theme.label}
+            aria-label={`${copy.theme.label}: ${copy.theme.modes[themeMode]}. ${copy.theme.switchLabel}: ${copy.theme.modes[nextThemeMode]}`}
+            title={copy.theme.modes[themeMode]}
             onClick={() => setThemeMode(nextThemeMode)}
           >
             <ThemeIcon size={16} aria-hidden="true" />
-            <span>{copy.theme.modes[themeMode]}</span>
           </button>
           <button
             className="language-toggle"
