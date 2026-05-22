@@ -691,10 +691,15 @@ button {
   flex: 0 0 auto;
   justify-self: end;
   align-self: center;
+  align-items: center;
   justify-content: flex-end;
-  height: 44px;
-  gap: 10px;
+  height: 42px;
+  gap: 0;
   min-width: max-content;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 2px;
+  background: var(--panel);
 }
 
 .topbar nav {
@@ -730,20 +735,20 @@ button {
 .theme-toggle {
   justify-content: center;
   align-self: center;
-  flex: 0 0 40px;
-  width: 40px;
-  height: 40px;
-  min-height: 40px;
-  max-height: 40px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  max-height: 36px;
+  border: 0;
+  border-radius: 5px 0 0 5px;
   padding: 0;
-  background: var(--panel);
+  background: transparent;
   color: var(--green);
   cursor: pointer;
   font-weight: 900;
+  line-height: 1;
   transition:
-    border-color 180ms ease,
     background 180ms ease,
     color 180ms ease,
     transform 180ms ease;
@@ -751,20 +756,30 @@ button {
 
 .theme-toggle:hover,
 .theme-toggle:focus-visible {
-  border-color: rgba(var(--accent-rgb), 0.42);
+  background: var(--surface-hover);
 }
 
 .language-toggle {
   align-self: center;
-  height: 40px;
-  min-height: 40px;
-  max-height: 40px;
+  height: 36px;
+  min-height: 36px;
+  max-height: 36px;
   gap: 7px;
-  border: 1px solid var(--line);
-  background: var(--panel);
+  border: 0;
+  border-left: 1px solid var(--line);
+  border-radius: 0 5px 5px 0;
+  padding: 8px 10px;
+  background: transparent;
   color: var(--green);
   cursor: pointer;
   font-weight: 800;
+  line-height: 1;
+}
+
+.theme-toggle svg,
+.language-toggle svg {
+  display: block;
+  flex: 0 0 auto;
 }
 
 .scene-rail {
@@ -1682,9 +1697,9 @@ h3 {
   }
 
   .theme-toggle {
-    flex: 0 0 40px;
-    width: 40px;
-    height: 40px;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
     justify-content: center;
   }
 
