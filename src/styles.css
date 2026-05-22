@@ -628,13 +628,14 @@ button {
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 18px;
+  height: 64px;
   min-height: 64px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  padding: 10px;
+  padding: 9px 10px;
   background: color-mix(in srgb, var(--canvas) 84%, transparent);
   backdrop-filter: blur(18px);
-  flex-wrap: wrap;
+  overflow: hidden;
 }
 
 .brand,
@@ -689,7 +690,9 @@ button {
 .toolbar-actions {
   flex: 0 0 auto;
   justify-self: end;
+  align-self: center;
   justify-content: flex-end;
+  height: 44px;
   gap: 10px;
   min-width: max-content;
 }
@@ -726,10 +729,12 @@ button {
 
 .theme-toggle {
   justify-content: center;
+  align-self: center;
   flex: 0 0 40px;
   width: 40px;
   height: 40px;
   min-height: 40px;
+  max-height: 40px;
   border: 1px solid var(--line);
   border-radius: 6px;
   padding: 0;
@@ -750,7 +755,10 @@ button {
 }
 
 .language-toggle {
+  align-self: center;
+  height: 40px;
   min-height: 40px;
+  max-height: 40px;
   gap: 7px;
   border: 1px solid var(--line);
   background: var(--panel);
@@ -1580,6 +1588,9 @@ h3 {
   .topbar {
     position: static;
     grid-template-columns: 1fr;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
   }
 
   .topbar nav {

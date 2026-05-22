@@ -513,12 +513,20 @@ function App() {
 
         const boot = gsap.timeline({ defaults: { duration: 0.78 } });
         boot
-          .from(".brand, .topbar nav a, .theme-toggle, .language-toggle", {
+          .from(".brand, .topbar nav a", {
             autoAlpha: 0,
             y: -12,
             stagger: 0.045,
             duration: 0.52,
           })
+          .from(
+            ".toolbar-actions",
+            {
+              autoAlpha: 0,
+              duration: 0.42,
+            },
+            "<",
+          )
           .to(heroItems, { autoAlpha: 1, y: 0, stagger: 0.075 }, "-=0.16")
           .to(
             ".console-panel",
