@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   ArrowUpRight,
@@ -21,7 +20,7 @@ import {
   Workflow,
 } from "lucide-react";
 
-gsap.registerPlugin(ScrollToPlugin, ScrollTrigger, useGSAP);
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 type Lang = "zh" | "en";
 type ThemeMode = "dark" | "light" | "cycle";
@@ -470,7 +469,8 @@ function App() {
         };
         const railLock = {
           index: null as number | null,
-          tween: null as gsap.core.Tween | null,
+          frame: null as number | null,
+          timer: null as number | null,
         };
         const getScrollTop = () =>
           window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
@@ -497,6 +497,55 @@ function App() {
           }
 
           setActiveRail(getActiveRailIndex());
+        };
+        const clearRailLockWatch = () => {
+          if (railLock.frame !== null) {
+            window.cancelAnimationFrame(railLock.frame);
+            railLock.frame = null;
+          }
+
+          if (railLock.timer !== null) {
+            window.clearTimeout(railLock.timer);
+            railLock.timer = null;
+          }
+        };
+        const releaseRailLock = (activeIndex: number, link: HTMLAnchorElement) => {
+          clearRailLockWatch();
+          railLock.index = null;
+          setActiveRail(activeIndex);
+          window.history.replaceState(null, "", link.hash);
+          ScrollTrigger.update();
+        };
+        const scrollToRailTarget = (
+          activeIndex: number,
+          targetSection: HTMLElement,
+          link: HTMLAnchorElement,
+        ) => {
+          const maxScroll = ScrollTrigger.maxScroll(window);
+          const targetY =
+            activeIndex === 0
+              ? 0
+              : getScrollTop() + targetSection.getBoundingClientRect().top - 88;
+          const clampedTargetY = Math.max(0, Math.min(maxScroll, targetY));
+          const startTime = window.performance.now();
+          const watchScrollEnd = () => {
+            const isAtTarget = Math.abs(getScrollTop() - clampedTargetY) < 3;
+            const isTimedOut = window.performance.now() - startTime > 1500;
+
+            if (isAtTarget || isTimedOut) {
+              releaseRailLock(activeIndex, link);
+              return;
+            }
+
+            railLock.frame = window.requestAnimationFrame(watchScrollEnd);
+          };
+
+          window.scrollTo({
+            top: clampedTargetY,
+            behavior: "smooth",
+          });
+          railLock.frame = window.requestAnimationFrame(watchScrollEnd);
+          railLock.timer = window.setTimeout(() => releaseRailLock(activeIndex, link), 1700);
         };
 
         gsap.defaults({ ease: "power3.out", overwrite: "auto" });
@@ -647,31 +696,10 @@ function App() {
             }
 
             event.preventDefault();
-            railLock.tween?.kill();
+            clearRailLockWatch();
             railLock.index = index;
             setActiveRail(index);
-            railLock.tween = gsap.to(window, {
-              duration: 0.82,
-              ease: "power3.out",
-              overwrite: "auto",
-              scrollTo: {
-                y: index === 0 ? 0 : targetSection,
-                offsetY: index === 0 ? 0 : 88,
-                autoKill: true,
-              },
-              onComplete: () => {
-                railLock.index = null;
-                railLock.tween = null;
-                setActiveRail(index);
-                window.history.replaceState(null, "", link.hash);
-                ScrollTrigger.update();
-              },
-              onInterrupt: () => {
-                railLock.index = null;
-                railLock.tween = null;
-                syncActiveRail();
-              },
-            });
+            scrollToRailTarget(index, targetSection, link);
           };
 
           link.addEventListener("click", setClickedRail);
@@ -692,7 +720,7 @@ function App() {
         setActiveRail(getActiveRailIndex());
 
         return () => {
-          railLock.tween?.kill();
+          clearRailLockWatch();
           railLinks.forEach((link) => link.classList.remove("is-active"));
           clickCleanups.forEach((cleanup) => cleanup());
         };
