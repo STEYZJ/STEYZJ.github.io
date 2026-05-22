@@ -13,13 +13,12 @@ import {
   Satellite,
   Sun,
   Sunrise,
-  Sunset,
   TerminalSquare,
   Workflow,
 } from "lucide-react";
 
 type Lang = "zh" | "en";
-type ThemeMode = "sunrise" | "noon" | "sunset" | "midnight";
+type ThemeMode = "dark" | "light" | "cycle";
 
 type Copy = {
   sceneNav: {
@@ -39,6 +38,7 @@ type Copy = {
   };
   theme: {
     label: string;
+    switchLabel: string;
     modes: Record<ThemeMode, string>;
   };
   hero: {
@@ -113,11 +113,11 @@ const copies: Record<Lang, Copy> = {
     },
     theme: {
       label: "主题模式",
+      switchLabel: "切换主题",
       modes: {
-        sunrise: "日出",
-        noon: "正午",
-        sunset: "日落",
-        midnight: "午夜",
+        dark: "黑主题",
+        light: "白主题",
+        cycle: "昼夜光效",
       },
     },
     hero: {
@@ -241,11 +241,11 @@ const copies: Record<Lang, Copy> = {
     },
     theme: {
       label: "Theme mode",
+      switchLabel: "Switch theme",
       modes: {
-        sunrise: "Sunrise",
-        noon: "Noon",
-        sunset: "Sunset",
-        midnight: "Midnight",
+        dark: "Dark",
+        light: "Light",
+        cycle: "Day cycle",
       },
     },
     hero: {
@@ -352,36 +352,21 @@ const copies: Record<Lang, Copy> = {
 };
 
 const focusIcons = [Workflow, Satellite, DatabaseZap];
-const themeOptions = [
-  { id: "sunrise", Icon: Sunrise },
-  { id: "noon", Icon: Sun },
-  { id: "sunset", Icon: Sunset },
-  { id: "midnight", Icon: Moon },
-] as const;
-
-function getThemeModeByTime(date = new Date()): ThemeMode {
-  const hour = date.getHours();
-
-  if (hour >= 5 && hour < 10) {
-    return "sunrise";
-  }
-
-  if (hour >= 10 && hour < 16) {
-    return "noon";
-  }
-
-  if (hour >= 16 && hour < 20) {
-    return "sunset";
-  }
-
-  return "midnight";
-}
+const themeSequence: ThemeMode[] = ["dark", "light", "cycle"];
+const themeIcons = {
+  dark: Moon,
+  light: Sun,
+  cycle: Sunrise,
+} satisfies Record<ThemeMode, typeof Moon>;
 
 function App() {
   const [lang, setLang] = useState<Lang>("zh");
-  const [themeMode, setThemeMode] = useState<ThemeMode>(() => getThemeModeByTime());
+  const [themeMode, setThemeMode] = useState<ThemeMode>("dark");
   const copy = copies[lang];
   const nextLang: Lang = lang === "zh" ? "en" : "zh";
+  const currentThemeIndex = themeSequence.indexOf(themeMode);
+  const nextThemeMode = themeSequence[(currentThemeIndex + 1) % themeSequence.length];
+  const ThemeIcon = themeIcons[themeMode];
 
   useEffect(() => {
     document.documentElement.dataset.theme = themeMode;
@@ -429,21 +414,16 @@ function App() {
             <a href="#stack">{copy.nav.stack}</a>
             <a href="#contact">{copy.nav.contact}</a>
           </nav>
-          <div className="theme-switch" role="group" aria-label={copy.theme.label}>
-            {themeOptions.map(({ id, Icon }) => (
-              <button
-                className={themeMode === id ? "is-active" : undefined}
-                type="button"
-                aria-pressed={themeMode === id}
-                aria-label={copy.theme.modes[id]}
-                key={id}
-                onClick={() => setThemeMode(id)}
-              >
-                <Icon size={15} aria-hidden="true" />
-                <span>{copy.theme.modes[id]}</span>
-              </button>
-            ))}
-          </div>
+          <button
+            className="theme-toggle"
+            type="button"
+            aria-label={`${copy.theme.switchLabel}: ${copy.theme.modes[nextThemeMode]}`}
+            title={copy.theme.label}
+            onClick={() => setThemeMode(nextThemeMode)}
+          >
+            <ThemeIcon size={16} aria-hidden="true" />
+            <span>{copy.theme.modes[themeMode]}</span>
+          </button>
           <button
             className="language-toggle"
             type="button"
