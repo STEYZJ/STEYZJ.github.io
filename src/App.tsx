@@ -99,6 +99,8 @@ type Copy = {
     title: string;
     text: string;
     action: string;
+    emailLabel: string;
+    email: string;
   };
 };
 
@@ -247,6 +249,8 @@ const copies: Record<Lang, Copy> = {
       title: "从 GitHub 开始",
       text: "项目、代码和研究记录都会优先沉淀在 GitHub。这里是了解 STEYZJ 当前工作的入口。",
       action: "访问 GitHub",
+      emailLabel: "邮箱",
+      email: "kyabia@nwafu.edu.cn",
     },
   },
   en: {
@@ -397,6 +401,8 @@ const copies: Record<Lang, Copy> = {
       title: "Start from GitHub",
       text: "Projects, code, and research notes live close to the GitHub profile. This site is the front door to STEYZJ's current work.",
       action: "Visit GitHub",
+      emailLabel: "Email",
+      email: "kyabia@nwafu.edu.cn",
     },
   },
 };
@@ -1047,6 +1053,10 @@ function App() {
             </a>
           </div>
           <p>{copy.contact.text}</p>
+          <a className="contact-email" href={`mailto:${copy.contact.email}`}>
+            <span>{copy.contact.emailLabel}</span>
+            {copy.contact.email}
+          </a>
         </div>
       </section>
     </main>
