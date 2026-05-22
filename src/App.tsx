@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   ArrowUpRight,
@@ -20,7 +21,7 @@ import {
   Workflow,
 } from "lucide-react";
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+gsap.registerPlugin(ScrollToPlugin, ScrollTrigger, useGSAP);
 
 type Lang = "zh" | "en";
 type ThemeMode = "dark" | "light" | "cycle";
@@ -467,6 +468,36 @@ function App() {
             link.classList.toggle("is-active", linkIndex === activeIndex);
           });
         };
+        const railLock = {
+          index: null as number | null,
+          tween: null as gsap.core.Tween | null,
+        };
+        const getScrollTop = () =>
+          window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+        const getActiveRailIndex = () => {
+          if (sections.length === 0) {
+            return 0;
+          }
+
+          if (getScrollTop() >= ScrollTrigger.maxScroll(window) - 4) {
+            return sections.length - 1;
+          }
+
+          const anchorY = window.innerHeight * 0.46;
+
+          return sections.reduce((activeIndex, section, index) => {
+            const rect = section.getBoundingClientRect();
+
+            return rect.top <= anchorY ? index : activeIndex;
+          }, 0);
+        };
+        const syncActiveRail = () => {
+          if (railLock.index !== null) {
+            return;
+          }
+
+          setActiveRail(getActiveRailIndex());
+        };
 
         gsap.defaults({ ease: "power3.out", overwrite: "auto" });
         gsap.set(revealItems, { autoAlpha: 0, y: 42, scale: 0.985 });
@@ -589,39 +620,71 @@ function App() {
         }
 
         const clickCleanups = railLinks.map((link, index) => {
-          const setClickedRail = () => setActiveRail(index);
+          const setClickedRail = (event: MouseEvent) => {
+            if (
+              event.defaultPrevented ||
+              event.button !== 0 ||
+              event.metaKey ||
+              event.ctrlKey ||
+              event.shiftKey ||
+              event.altKey
+            ) {
+              return;
+            }
+
+            const targetSection = sections[index];
+
+            if (!targetSection) {
+              return;
+            }
+
+            event.preventDefault();
+            railLock.tween?.kill();
+            railLock.index = index;
+            setActiveRail(index);
+            railLock.tween = gsap.to(window, {
+              duration: 0.82,
+              ease: "power3.out",
+              overwrite: "auto",
+              scrollTo: {
+                y: index === 0 ? 0 : targetSection,
+                offsetY: index === 0 ? 0 : 88,
+                autoKill: true,
+              },
+              onComplete: () => {
+                railLock.index = null;
+                railLock.tween = null;
+                setActiveRail(index);
+                window.history.replaceState(null, "", link.hash);
+                ScrollTrigger.update();
+              },
+              onInterrupt: () => {
+                railLock.index = null;
+                railLock.tween = null;
+                syncActiveRail();
+              },
+            });
+          };
 
           link.addEventListener("click", setClickedRail);
 
           return () => link.removeEventListener("click", setClickedRail);
         });
 
-        sections.forEach((section, index) => {
-          const isLastSection = index === sections.length - 1;
-
-          ScrollTrigger.create({
-            trigger: section,
-            start: isLastSection ? "top 72%" : "top center",
-            end: isLastSection ? "bottom bottom" : "bottom center",
-            onToggle: (self) => {
-              if (!self.isActive) {
-                return;
-              }
-
-              setActiveRail(index);
-            },
-          });
-        });
-
         ScrollTrigger.create({
           trigger: root,
-          start: "bottom bottom",
-          onEnter: () => setActiveRail(sections.length - 1),
+          start: "top top",
+          end: "bottom bottom",
+          onUpdate: syncActiveRail,
+          onRefresh: syncActiveRail,
+          onEnter: syncActiveRail,
+          onEnterBack: syncActiveRail,
         });
 
-        setActiveRail(0);
+        setActiveRail(getActiveRailIndex());
 
         return () => {
+          railLock.tween?.kill();
           railLinks.forEach((link) => link.classList.remove("is-active"));
           clickCleanups.forEach((cleanup) => cleanup());
         };
