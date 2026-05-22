@@ -635,6 +635,7 @@ button {
 .brand,
 .nav-cluster,
 .topbar nav,
+.toolbar-actions,
 .hero-actions,
 .tag-row,
 .repo-link,
@@ -685,9 +686,21 @@ button {
   gap: 10px;
   flex-wrap: wrap;
   justify-content: flex-end;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.toolbar-actions {
+  flex: 0 0 auto;
+  gap: 10px;
+  min-width: max-content;
 }
 
 .topbar nav {
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  min-width: 0;
   gap: 2px;
   color: var(--muted);
   font-size: 0.92rem;
@@ -737,6 +750,7 @@ button {
 }
 
 .language-toggle {
+  min-height: 40px;
   gap: 7px;
   border: 1px solid var(--line);
   background: var(--panel);
@@ -1565,7 +1579,13 @@ h3 {
   }
 
   .topbar nav {
+    flex: 1 1 auto;
+    justify-content: flex-start;
     flex-wrap: wrap;
+  }
+
+  .toolbar-actions {
+    margin-left: auto;
   }
 
   .hero {
@@ -1632,6 +1652,11 @@ h3 {
     flex-direction: column;
   }
 
+  .toolbar-actions {
+    width: 100%;
+    margin-left: 0;
+  }
+
   .topbar nav {
     justify-content: space-between;
     width: 100%;
@@ -1642,15 +1667,16 @@ h3 {
   }
 
   .language-toggle {
+    flex: 1 1 auto;
     justify-content: center;
     width: 100%;
   }
 
   .theme-toggle {
+    flex: 0 0 40px;
     width: 40px;
     height: 40px;
     justify-content: center;
-    align-self: flex-start;
   }
 
   .featured-card {

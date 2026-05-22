@@ -644,24 +644,26 @@ function App() {
             <a href="#stack">{copy.nav.stack}</a>
             <a href="#contact">{copy.nav.contact}</a>
           </nav>
-          <button
-            className="theme-toggle"
-            type="button"
-            aria-label={`${copy.theme.label}: ${copy.theme.modes[themeMode]}. ${copy.theme.switchLabel}: ${copy.theme.modes[nextThemeMode]}`}
-            title={copy.theme.modes[themeMode]}
-            onClick={() => setThemeMode(nextThemeMode)}
-          >
-            <ThemeIcon size={16} aria-hidden="true" />
-          </button>
-          <button
-            className="language-toggle"
-            type="button"
-            aria-label={copy.nav.switchLabel}
-            onClick={() => setLang(nextLang)}
-          >
-            <Globe2 size={16} aria-hidden="true" />
-            {lang === "zh" ? "EN" : "中文"}
-          </button>
+          <div className="toolbar-actions">
+            <button
+              className="theme-toggle"
+              type="button"
+              aria-label={`${copy.theme.label}: ${copy.theme.modes[themeMode]}. ${copy.theme.switchLabel}: ${copy.theme.modes[nextThemeMode]}`}
+              title={copy.theme.modes[themeMode]}
+              onClick={() => setThemeMode(nextThemeMode)}
+            >
+              <ThemeIcon size={16} aria-hidden="true" />
+            </button>
+            <button
+              className="language-toggle"
+              type="button"
+              aria-label={copy.nav.switchLabel}
+              onClick={() => setLang(nextLang)}
+            >
+              <Globe2 size={16} aria-hidden="true" />
+              {lang === "zh" ? "EN" : "中文"}
+            </button>
+          </div>
         </div>
       </header>
 
