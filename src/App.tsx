@@ -471,6 +471,11 @@ function App() {
         const sections = sectionIds
           .map((id) => root.querySelector<HTMLElement>(`#${id}`))
           .filter((section): section is HTMLElement => Boolean(section));
+        const setActiveRail = (activeIndex: number) => {
+          railLinks.forEach((link, linkIndex) => {
+            link.classList.toggle("is-active", linkIndex === activeIndex);
+          });
+        };
 
         gsap.defaults({ ease: "power3.out", overwrite: "auto" });
         gsap.set(revealItems, { autoAlpha: 0, y: 42, scale: 0.985 });
@@ -592,27 +597,42 @@ function App() {
           });
         }
 
+        const clickCleanups = railLinks.map((link, index) => {
+          const setClickedRail = () => setActiveRail(index);
+
+          link.addEventListener("click", setClickedRail);
+
+          return () => link.removeEventListener("click", setClickedRail);
+        });
+
         sections.forEach((section, index) => {
+          const isLastSection = index === sections.length - 1;
+
           ScrollTrigger.create({
             trigger: section,
-            start: "top center",
-            end: "bottom center",
+            start: isLastSection ? "top 72%" : "top center",
+            end: isLastSection ? "bottom bottom" : "bottom center",
             onToggle: (self) => {
               if (!self.isActive) {
                 return;
               }
 
-              railLinks.forEach((link, linkIndex) => {
-                link.classList.toggle("is-active", linkIndex === index);
-              });
+              setActiveRail(index);
             },
           });
         });
 
-        railLinks[0]?.classList.add("is-active");
+        ScrollTrigger.create({
+          trigger: root,
+          start: "bottom bottom",
+          onEnter: () => setActiveRail(sections.length - 1),
+        });
+
+        setActiveRail(0);
 
         return () => {
           railLinks.forEach((link) => link.classList.remove("is-active"));
+          clickCleanups.forEach((cleanup) => cleanup());
         };
       });
 
