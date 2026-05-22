@@ -15,8 +15,7 @@ import {
   Radar,
   Satellite,
   Sun,
-  Sunrise,
-  Sunset,
+  SunMoon,
   TerminalSquare,
   Workflow,
 } from "lucide-react";
@@ -364,16 +363,8 @@ const themeSequence: ThemeMode[] = ["dark", "light", "cycle"];
 const themeIcons = {
   dark: Moon,
   light: Sun,
-  cycle: Sunrise,
+  cycle: SunMoon,
 } satisfies Record<ThemeMode, typeof Moon>;
-const phaseIcons = {
-  dawn: Sunrise,
-  noon: Sun,
-  sunset: Sunset,
-  evening: Moon,
-  midnight: Moon,
-  predawn: Sunrise,
-} satisfies Record<DayPhase, typeof Moon>;
 
 function getDayPhase(date = new Date()): DayPhase {
   const hour = date.getHours() + date.getMinutes() / 60;
@@ -411,7 +402,7 @@ function App() {
   const nextLang: Lang = lang === "zh" ? "en" : "zh";
   const currentThemeIndex = themeSequence.indexOf(themeMode);
   const nextThemeMode = themeSequence[(currentThemeIndex + 1) % themeSequence.length];
-  const ThemeIcon = themeMode === "cycle" ? phaseIcons[dayPhase] : themeIcons[themeMode];
+  const ThemeIcon = themeIcons[themeMode];
 
   useEffect(() => {
     document.documentElement.dataset.theme = themeMode;

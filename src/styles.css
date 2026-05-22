@@ -153,6 +153,7 @@
   --green-soft: rgba(var(--accent-rgb), 0.12);
   --accent-ink: #04130e;
   --code-ink: #d8fff0;
+  --code-bg: color-mix(in srgb, var(--canvas) 86%, #000000);
   --grid-line: rgba(255, 255, 255, 0.035);
   --surface-sheen: rgba(255, 255, 255, 0.045);
   --surface-fill: rgba(255, 255, 255, 0.035);
@@ -181,6 +182,7 @@
   --secondary-b: 255;
   --accent-ink: #04130e;
   --code-ink: #d8fff0;
+  --code-bg: color-mix(in srgb, var(--canvas) 86%, #000000);
   --grid-line: rgba(255, 255, 255, 0.035);
   --surface-sheen: rgba(255, 255, 255, 0.045);
   --surface-fill: rgba(255, 255, 255, 0.035);
@@ -209,7 +211,8 @@
   --secondary-g: 104;
   --secondary-b: 210;
   --accent-ink: #ffffff;
-  --code-ink: #114232;
+  --code-ink: #173b31;
+  --code-bg: #f8f6ef;
   --grid-line: rgba(17, 17, 15, 0.06);
   --surface-sheen: rgba(255, 255, 255, 0.7);
   --surface-fill: rgba(17, 17, 15, 0.04);
@@ -238,6 +241,7 @@
   --secondary-b: 146;
   --accent-ink: #04101f;
   --code-ink: #dce8ff;
+  --code-bg: color-mix(in srgb, var(--canvas) 86%, #000000);
   --grid-line: rgba(255, 255, 255, 0.032);
   --surface-sheen: rgba(255, 255, 255, 0.04);
   --surface-fill: rgba(255, 255, 255, 0.035);
@@ -310,7 +314,8 @@
   --secondary-g: 112;
   --secondary-b: 212;
   --accent-ink: #ffffff;
-  --code-ink: #113d31;
+  --code-ink: #173b31;
+  --code-bg: #f8f6ef;
   --grid-line: rgba(16, 16, 14, 0.065);
   --surface-sheen: rgba(255, 255, 255, 0.78);
   --surface-fill: rgba(16, 16, 14, 0.045);
@@ -619,9 +624,9 @@ button {
   position: sticky;
   top: 12px;
   z-index: 5;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
   gap: 18px;
   min-height: 64px;
   border: 1px solid var(--line);
@@ -683,15 +688,21 @@ button {
 }
 
 .nav-cluster {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
   justify-content: flex-end;
+  justify-self: end;
+  width: min(100%, 520px);
   min-width: 0;
   max-width: 100%;
 }
 
 .toolbar-actions {
   flex: 0 0 auto;
+  justify-self: end;
+  justify-content: flex-end;
   gap: 10px;
   min-width: max-content;
 }
@@ -701,6 +712,7 @@ button {
   flex-wrap: wrap;
   justify-content: flex-end;
   min-width: 0;
+  max-width: 100%;
   gap: 2px;
   color: var(--muted);
   font-size: 0.92rem;
@@ -729,7 +741,7 @@ button {
   flex: 0 0 40px;
   width: 40px;
   height: 40px;
-  min-height: 38px;
+  min-height: 40px;
   border: 1px solid var(--line);
   border-radius: 6px;
   padding: 0;
@@ -1146,7 +1158,7 @@ h3 {
   overflow: hidden;
   background:
     linear-gradient(var(--grid-line) 1px, transparent 1px),
-    color-mix(in srgb, var(--canvas) 86%, #000000);
+    var(--code-bg);
   background-size: 100% 32px;
   color: var(--code-ink);
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
@@ -1570,11 +1582,13 @@ h3 {
 
   .topbar {
     position: static;
-    display: grid;
+    grid-template-columns: 1fr;
   }
 
   .nav-cluster {
-    justify-content: space-between;
+    grid-template-columns: minmax(0, 1fr) auto;
+    justify-self: stretch;
+    justify-content: stretch;
     width: 100%;
   }
 
@@ -1649,7 +1663,7 @@ h3 {
 
   .nav-cluster {
     align-items: stretch;
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
 
   .toolbar-actions {
