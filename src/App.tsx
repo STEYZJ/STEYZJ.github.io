@@ -12,10 +12,10 @@ import {
   Globe2,
   Layers3,
   Moon,
+  Orbit,
   Radar,
   Satellite,
   Sun,
-  SunMoon,
   TerminalSquare,
   Workflow,
 } from "lucide-react";
@@ -363,7 +363,7 @@ const themeSequence: ThemeMode[] = ["dark", "light", "cycle"];
 const themeIcons = {
   dark: Moon,
   light: Sun,
-  cycle: SunMoon,
+  cycle: Orbit,
 } satisfies Record<ThemeMode, typeof Moon>;
 
 function getDayPhase(date = new Date()): DayPhase {
@@ -648,33 +648,31 @@ function App() {
             <small>STEYZJ</small>
           </span>
         </a>
-        <div className="nav-cluster">
-          <nav>
-            <a href="#work">{copy.nav.work}</a>
-            <a href="#focus">{copy.nav.focus}</a>
-            <a href="#stack">{copy.nav.stack}</a>
-            <a href="#contact">{copy.nav.contact}</a>
-          </nav>
-          <div className="toolbar-actions">
-            <button
-              className="theme-toggle"
-              type="button"
-              aria-label={`${copy.theme.label}: ${copy.theme.modes[themeMode]}. ${copy.theme.switchLabel}: ${copy.theme.modes[nextThemeMode]}`}
-              title={copy.theme.modes[themeMode]}
-              onClick={() => setThemeMode(nextThemeMode)}
-            >
-              <ThemeIcon size={16} aria-hidden="true" />
-            </button>
-            <button
-              className="language-toggle"
-              type="button"
-              aria-label={copy.nav.switchLabel}
-              onClick={() => setLang(nextLang)}
-            >
-              <Globe2 size={16} aria-hidden="true" />
-              {lang === "zh" ? "EN" : "中文"}
-            </button>
-          </div>
+        <nav>
+          <a href="#work">{copy.nav.work}</a>
+          <a href="#focus">{copy.nav.focus}</a>
+          <a href="#stack">{copy.nav.stack}</a>
+          <a href="#contact">{copy.nav.contact}</a>
+        </nav>
+        <div className="toolbar-actions">
+          <button
+            className="theme-toggle"
+            type="button"
+            aria-label={`${copy.theme.label}: ${copy.theme.modes[themeMode]}. ${copy.theme.switchLabel}: ${copy.theme.modes[nextThemeMode]}`}
+            title={copy.theme.modes[themeMode]}
+            onClick={() => setThemeMode(nextThemeMode)}
+          >
+            <ThemeIcon size={16} aria-hidden="true" />
+          </button>
+          <button
+            className="language-toggle"
+            type="button"
+            aria-label={copy.nav.switchLabel}
+            onClick={() => setLang(nextLang)}
+          >
+            <Globe2 size={16} aria-hidden="true" />
+            {lang === "zh" ? "EN" : "中文"}
+          </button>
         </div>
       </header>
 

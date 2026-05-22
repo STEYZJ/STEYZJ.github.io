@@ -625,7 +625,7 @@ button {
   top: 12px;
   z-index: 5;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 18px;
   min-height: 64px;
@@ -638,7 +638,6 @@ button {
 }
 
 .brand,
-.nav-cluster,
 .topbar nav,
 .toolbar-actions,
 .hero-actions,
@@ -687,18 +686,6 @@ button {
   font-size: 0.78rem;
 }
 
-.nav-cluster {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 10px;
-  justify-content: flex-end;
-  justify-self: end;
-  width: min(100%, 520px);
-  min-width: 0;
-  max-width: 100%;
-}
-
 .toolbar-actions {
   flex: 0 0 auto;
   justify-self: end;
@@ -708,6 +695,7 @@ button {
 }
 
 .topbar nav {
+  justify-self: end;
   flex: 0 1 auto;
   flex-wrap: wrap;
   justify-content: flex-end;
@@ -1166,6 +1154,15 @@ h3 {
   line-height: 2.35;
 }
 
+:root[data-theme="light"] .code-window,
+:root[data-theme="cycle"][data-phase="noon"] .code-window {
+  border-color: #d9d0c2;
+  background:
+    linear-gradient(rgba(17, 17, 15, 0.035) 1px, transparent 1px),
+    #fffdf8;
+  color: #173b31;
+}
+
 .code-window code {
   display: block;
   padding: 0 18px;
@@ -1585,15 +1582,8 @@ h3 {
     grid-template-columns: 1fr;
   }
 
-  .nav-cluster {
-    grid-template-columns: minmax(0, 1fr) auto;
-    justify-self: stretch;
-    justify-content: stretch;
-    width: 100%;
-  }
-
   .topbar nav {
-    flex: 1 1 auto;
+    justify-self: start;
     justify-content: flex-start;
     flex-wrap: wrap;
   }
@@ -1645,7 +1635,6 @@ h3 {
     width: 100%;
   }
 
-  .nav-cluster,
   .hero-actions,
   .button {
     width: 100%;
@@ -1659,11 +1648,6 @@ h3 {
     width: auto;
     padding-right: 14px;
     padding-left: 14px;
-  }
-
-  .nav-cluster {
-    align-items: stretch;
-    grid-template-columns: 1fr;
   }
 
   .toolbar-actions {
