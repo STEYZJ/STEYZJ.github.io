@@ -1,4 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   ArrowUpRight,
   BrainCircuit,
@@ -17,6 +20,8 @@ import {
   TerminalSquare,
   Workflow,
 } from "lucide-react";
+
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 type Lang = "zh" | "en";
 type ThemeMode = "dark" | "light" | "cycle";
@@ -354,6 +359,7 @@ const copies: Record<Lang, Copy> = {
 };
 
 const focusIcons = [Workflow, Satellite, DatabaseZap];
+const sectionIds = ["top", "work", "focus", "stack", "contact"] as const;
 const themeSequence: ThemeMode[] = ["dark", "light", "cycle"];
 const themeIcons = {
   dark: Moon,
@@ -396,6 +402,8 @@ function getDayPhase(date = new Date()): DayPhase {
 }
 
 function App() {
+  const rootRef = useRef<HTMLElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
   const [lang, setLang] = useState<Lang>("zh");
   const [themeMode, setThemeMode] = useState<ThemeMode>("dark");
   const [dayPhase, setDayPhase] = useState<DayPhase>(() => getDayPhase());
@@ -423,33 +431,204 @@ function App() {
     return () => window.clearInterval(timer);
   }, [themeMode]);
 
-  useEffect(() => {
-    const revealItems = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+  useGSAP(
+    () => {
+      const root = rootRef.current;
 
-    if (!("IntersectionObserver" in window)) {
-      revealItems.forEach((item) => item.classList.add("is-visible"));
-      return;
-    }
+      if (!root) {
+        return;
+      }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          entry.target.classList.toggle("is-visible", entry.isIntersecting);
+      const query = <T extends HTMLElement>(selector: string) =>
+        Array.from(root.querySelectorAll<T>(selector));
+      const motion = gsap.matchMedia();
+
+      motion.add("(prefers-reduced-motion: reduce)", () => {
+        gsap.set(query("[data-reveal]"), {
+          autoAlpha: 1,
+          clearProps: "transform",
         });
-      },
-      {
-        rootMargin: "0px 0px -8% 0px",
-        threshold: 0.08,
-      },
-    );
+        gsap.set(
+          query(
+            ".hero-copy .scene-kicker, .hero-copy .eyebrow, .hero-copy h1, .hero-text, .hero-actions, .protocol-strip, .console-panel, .console-tabs span, .code-window code, .panel-status, .signal-grid div",
+          ),
+          {
+            autoAlpha: 1,
+            clearProps: "transform",
+          },
+        );
+      });
 
-    revealItems.forEach((item) => observer.observe(item));
+      motion.add("(prefers-reduced-motion: no-preference)", () => {
+        const heroItems = query(
+          ".hero-copy .scene-kicker, .hero-copy .eyebrow, .hero-copy h1, .hero-text, .hero-actions, .protocol-strip",
+        );
+        const consoleDetails = query(
+          ".console-tabs span, .code-window code, .panel-status, .signal-grid div",
+        );
+        const revealItems = query("[data-reveal]");
+        const railLinks = query<HTMLAnchorElement>(".scene-rail a");
+        const sections = sectionIds
+          .map((id) => root.querySelector<HTMLElement>(`#${id}`))
+          .filter((section): section is HTMLElement => Boolean(section));
 
-    return () => observer.disconnect();
-  }, []);
+        gsap.defaults({ ease: "power3.out", overwrite: "auto" });
+        gsap.set(revealItems, { autoAlpha: 0, y: 42, scale: 0.985 });
+        gsap.set(heroItems, { autoAlpha: 0, y: 34 });
+        gsap.set(".console-panel", {
+          autoAlpha: 0,
+          y: 48,
+          scale: 0.97,
+          rotationX: 7,
+          transformOrigin: "center bottom",
+        });
+        gsap.set(consoleDetails, { autoAlpha: 0, y: 16 });
+
+        const boot = gsap.timeline({ defaults: { duration: 0.78 } });
+        boot
+          .from(".brand, .topbar nav a, .theme-toggle, .language-toggle", {
+            autoAlpha: 0,
+            y: -12,
+            stagger: 0.045,
+            duration: 0.52,
+          })
+          .to(heroItems, { autoAlpha: 1, y: 0, stagger: 0.075 }, "-=0.16")
+          .to(
+            ".console-panel",
+            {
+              autoAlpha: 1,
+              y: 0,
+              scale: 1,
+              rotationX: 0,
+              duration: 0.92,
+              ease: "power3.out",
+            },
+            "-=0.48",
+          )
+          .to(consoleDetails, { autoAlpha: 1, y: 0, stagger: 0.045 }, "-=0.34");
+
+        query(".scroll-scene").forEach((scene) => {
+          const items = Array.from(scene.querySelectorAll<HTMLElement>("[data-reveal]"));
+
+          if (items.length === 0) {
+            return;
+          }
+
+          gsap
+            .timeline({
+              scrollTrigger: {
+                trigger: scene,
+                start: "top 74%",
+                end: "bottom 24%",
+                toggleActions: "play reverse play reverse",
+              },
+            })
+            .to(items, {
+              autoAlpha: 1,
+              y: 0,
+              scale: 1,
+              stagger: { each: 0.075, from: "start" },
+              duration: 0.82,
+            });
+        });
+
+        if (progressRef.current) {
+          gsap.set(progressRef.current, { scaleX: 0, transformOrigin: "left center" });
+          gsap.to(progressRef.current, {
+            scaleX: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: root,
+              start: "top top",
+              end: "bottom bottom",
+              scrub: 0.25,
+            },
+          });
+        }
+
+        const workSection = root.querySelector<HTMLElement>("#work");
+        const stageLine = root.querySelector<HTMLElement>(".stage-line span");
+
+        if (workSection && stageLine) {
+          gsap.fromTo(
+            stageLine,
+            { scaleX: 0, transformOrigin: "left center" },
+            {
+              scaleX: 1,
+              ease: "none",
+              scrollTrigger: {
+                trigger: workSection,
+                start: "top 68%",
+                end: "bottom 28%",
+                scrub: 0.8,
+              },
+            },
+          );
+        }
+
+        const consolePanel = root.querySelector<HTMLElement>(".console-panel");
+
+        if (consolePanel) {
+          gsap.to(consolePanel, {
+            yPercent: -5,
+            ease: "none",
+            scrollTrigger: {
+              trigger: ".hero",
+              start: "top top",
+              end: "bottom top",
+              scrub: 1,
+            },
+          });
+        }
+
+        const orbit = root.querySelector<HTMLElement>(".console-orbit");
+
+        if (orbit) {
+          gsap.to(orbit, {
+            rotation: 360,
+            duration: 30,
+            ease: "none",
+            repeat: -1,
+          });
+        }
+
+        sections.forEach((section, index) => {
+          ScrollTrigger.create({
+            trigger: section,
+            start: "top center",
+            end: "bottom center",
+            onToggle: (self) => {
+              if (!self.isActive) {
+                return;
+              }
+
+              railLinks.forEach((link, linkIndex) => {
+                link.classList.toggle("is-active", linkIndex === index);
+              });
+            },
+          });
+        });
+
+        railLinks[0]?.classList.add("is-active");
+
+        return () => {
+          railLinks.forEach((link) => link.classList.remove("is-active"));
+        };
+      });
+
+      return () => motion.revert();
+    },
+    { scope: rootRef, dependencies: [lang], revertOnUpdate: true },
+  );
 
   return (
-    <main className="site-shell" lang={lang === "zh" ? "zh-CN" : "en"} data-theme={themeMode}>
+    <main
+      className="site-shell"
+      lang={lang === "zh" ? "zh-CN" : "en"}
+      data-theme={themeMode}
+      ref={rootRef}
+    >
+      <div className="scroll-progress" ref={progressRef} aria-hidden="true" />
       <header className="topbar" aria-label="Primary navigation">
         <a className="brand" href="#top" aria-label="Kyabia home">
           <span className="brand-mark">K</span>
@@ -527,6 +706,11 @@ function App() {
         </div>
 
         <aside className="console-panel" aria-label={copy.hero.panelTitle}>
+          <div className="console-orbit" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
           <div className="console-topline">
             <span>{copy.hero.panelTitle}</span>
             <div aria-hidden="true">
@@ -604,6 +788,9 @@ function App() {
           </a>
 
           <div className="agent-flow" aria-label={copy.project.flowLabel}>
+            <div className="stage-line" aria-hidden="true">
+              <span />
+            </div>
             {copy.project.steps.map((step, index) => (
               <article
                 className="flow-step"
